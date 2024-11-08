@@ -1,0 +1,24 @@
+<% layout("layouts/boilerplate") %>
+<ul class="property-list">
+  <% for (let property of properties) { %>
+    <a class="property-link" href="/properties/<%= property._id %>">
+  <li class="property-card">
+    <div class="card-image">
+      <% if (property.images.length > 0) { %>
+        <img src="<%= property.images[0].url %>" alt="<%= property.title %>" />
+      <% } else { %>
+        <img src="../../assests/image-not-available.png" alt="Default Image" /> <!-- Use a default image here -->
+      <% } %>
+    </div>
+    <div class="card-content">
+      <h4 class="card-title">
+        <%= property.title %>
+      </h4>
+
+      <p><%= property.description.substring(0, 100) %>...</p>
+      <p>&#8377;<%= property.price.toLocaleString("en-IN") %> per month</p>
+    </div>
+  </li>
+  </a>
+  <% } %>
+</ul>

@@ -1,0 +1,46 @@
+<% layout("layouts/boilerplate.ejs") %>
+
+<body>
+  <form
+    class="new-form needs-validation"
+    action="/signup"
+    method="post"
+    novalidate
+  >
+    <h2 class="form-title">create an account</h2>
+    <label for="username" class="form-label">Enter username</label>
+    <input
+      type="text"
+      name="username"
+      id="username"
+      class="form-control"
+      required
+    />
+    <br /><br />
+    <label for="email" class="form-label">Enter email</label>
+    <input type="email" name="email" id="email" class="form-control" required />
+    <br /><br />
+    <label for="phone" class="form-label">Enter phone number</label>
+    <input
+      type="tel"
+      name="phone"
+      id="phone"
+      placeholder="enter phone number with country code eg. +91 xxxxxxxxxx"
+      class="form-control"
+      required
+    />
+    <br /><br />
+    <label for="password" class="form-label">Enter password</label>
+    <input
+      type="password"
+      name="password"
+      id="password"
+      class="form-control"
+      required
+    />
+    <br /><br />
+    <p>Already Registered ?<a href="/login"> Log In</a></p>
+
+    <button class="form-submit-btn btn btn-success">signUp</button>
+  </form>
+</body>

@@ -1,0 +1,132 @@
+<% layout("layouts/boilerplate.ejs") %>
+
+<body>
+  <form
+    class="edit-form needs-validation"
+    action="/properties/<%- property._id %>?_method=PUT"
+    method="post"
+    novalidate
+    enctype="multipart/form-data"
+  >
+    <h2 class="form-title">Edit Property</h2>
+    <label class="form-label" for="title">Enter title</label>
+    <input
+      type="text"
+      name="property[title]"
+      id="title"
+      value="<%= property.title %>"
+      required
+      class="form-control"
+    />
+    <br /><br />
+    <label class="form-label" for="description">Enter Description</label>
+    <textarea
+      name="property[description]"
+      id="description"
+      required
+      class="form-control"
+    >
+<%= property.description %></textarea
+    >
+    <br /><br />
+    <h3 class="form-title">Edit Location</h3>
+    <input
+      type="text"
+      placeholder="street"
+      name="property[street]"
+      value="<%= property.location.street %>"
+      required
+      class="form-control"
+    />
+    <input
+      type="text"
+      placeholder="city"
+      name="property[city]"
+      value="<%= property.location.city %>"
+      required
+      class="form-control"
+    />
+    <input
+      type="text"
+      placeholder="state"
+      name="property[state]"
+      value="<%= property.location.state %>"
+      required
+      class="form-control"
+    />
+    <input
+      type="text"
+      placeholder="country"
+      name="property[country]"
+      value="<%= property.location.country %>"
+      required
+      class="form-control"
+    />
+    <input
+      type="number"
+      placeholder="zipCode"
+      name="property[zipCode]"
+      value="<%= property.location.zipCode %>"
+      required
+      class="form-control"
+    />
+    <br /><br />
+    <label class="form-label" for="price">Enter Price</label>
+    <input
+      type="number"
+      name="property[price]"
+      value="<%=property.price%>"
+      required
+      class="form-control"
+    />
+    <div class="image-preview">
+      original images
+      <% property.images.forEach((image) => { %>
+
+      <img width="60rem" height="60rem" src="<%= image.url %>" alt="<%= image.filename %>" />
+
+      <% }) %>
+    </div>
+    <label for="image" class="form-label">Upload new Image</label>
+    <input
+      type="file"
+      name="property[image]"
+      class="form-control"
+      id="image"
+      multiple
+      placeholder="you can add upto 4 images"
+    />
+    <br /><br />
+    <label class="form-label" for="propertyType">Select PropertyType</label>
+    <select
+      name="property[propertyType]"
+      id="propertyType"
+      required
+      class="form-control"
+    >
+      <option value="Apartment">Apartment</option>
+      <option value="Room">Room</option>
+      <option value="House">House</option>
+      <option value="Studio">Studio</option>
+    </select>
+    <br /><br />
+    <label class="form-label" for="availablefrom">availableFrom:</label>
+    <input
+      type="date"
+      name="property[availableFrom]"
+      class="form-control"
+      value="<%= new Date(property.availableFrom).toISOString().slice(0, 10) %>"
+      required
+    />
+    <br /><br />
+    <label class="form-label" for="amenities">Amenities</label>
+    <input
+      type="text"
+      name="property[amenities]"
+      value="<%=property.amenities%>"
+      required
+      class="form-control"
+    />
+    <button class="form-submit-btn">edit</button>
+  </form>
+</body>

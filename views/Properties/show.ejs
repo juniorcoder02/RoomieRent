@@ -1,0 +1,207 @@
+<% layout("layouts/boilerplate") %>
+<body>
+  <div class="container">
+    <div class="listing-details-container">
+      <h1 class="listing-title">Listing Details</h1>
+
+      <!-- Image Gallery Section -->
+      <div class="image-gallery">
+        <% property.images.forEach((image) => { %>
+        <div class="image-box">
+          <img src="<%= image.url %>" alt="<%= image.filename %>" />
+        </div>
+        <% }) %>
+      </div>
+
+      <!-- Listing Details Section -->
+      <ul class="listing-details">
+        <li class="listing-item">
+          <strong>created by: </strong><%= property.owner.username %>
+        </li>
+        <li class="listing-item">
+          <strong>Title: </strong><%= property.title %>
+        </li>
+        <li class="listing-item">
+          <strong>Description: </strong><%= property.description %>
+        </li>
+        <li class="listing-item">
+          <strong>Location: </strong>
+          <%= property.location.street %>, <%= property.location.city %>, <%=
+          property.location.state %>, <%= property.location.country %>, <%=
+          property.location.ZipCode %>
+        </li>
+        <li class="listing-item">
+          <strong>Price: </strong>&#8377;<%=
+          property.price.toLocaleString("en-IN") %> per month
+        </li>
+        <li class="listing-item">
+          <strong>Property Type: </strong><%= property.propertyType %>
+        </li>
+        <li class="listing-item">
+          <strong>Available From: </strong><%=
+          property.availableFrom.toLocaleDateString() %>
+        </li>
+        <li class="listing-item">
+          <strong>Amenities: </strong><%= property.amenities %>
+        </li>
+        <li class="listing-item">
+          <strong>Date Posted: </strong><%= property.datePosted %>
+        </li>
+      </ul>
+
+      <div class="contact-options">
+        <!-- Call Option -->
+        <a href="tel:<%= property.owner.phone %>" title="Call">
+          <i class="fas fa-phone-alt contact-icon"></i>
+        </a>
+
+        <!-- Email Option with Pre-filled Message -->
+        <a
+          href="mailto:<%= property.owner.email %>?subject=Inquiry about <%= property.title %>&body=Hello <%= property.owner.name %>,%0D%0A%0D%0AI am interested in your property located at <%= property.location.city %>. Could you please provide more details?%0D%0A%0D%0AThank you!"
+          title="Email"
+        >
+          <i class="fas fa-envelope contact-icon"></i>
+        </a>
+
+        <!-- WhatsApp Option with Pre-filled Message -->
+        <a
+          href="https://wa.me/<%= property.owner.whatsapp %>?text=Hello <%= property.owner.name %>, I am interested in your property titled '<%= property.title %>' located at <%= property.location.city %>. Could you please provide more details?"
+          target="_blank"
+          title="WhatsApp"
+        >
+          <i class="fab fa-whatsapp contact-icon"></i>
+        </a>
+      </div>
+
+      <%if(currUser && property.owner._id.equals(currUser._id)){%>
+      <div class="listing-details-card">
+        <div class="listing-actions">
+          <a class="edit-link" href="/properties/<%= property._id %>/edit"
+            >Edit Listing</a
+          >
+          <form
+            class="delete-form"
+            action="/properties/<%= property._id %>?_method=DELETE"
+            method="post"
+          >
+            <button class="delete-btn">Delete Property</button>
+          </form>
+        </div>
+      </div>
+      <%}%>
+      <hr />
+
+      <div class="reviews-card">
+        <%if(currUser){%>
+        <div class="review-form">
+          <h2>Add Review</h2>
+          <form
+            action="/properties/<%= property._id %>/reviews"
+            method="post"
+            class="review-form needs-validation"
+            novalidate
+          >
+            <div class="form-group">
+              <fieldset class="starability-slot">
+                <legend>Rating:</legend>
+                <input
+                  type="radio"
+                  id="no-rate"
+                  class="input-no-rate"
+                  name="review[rating]"
+                  value="1"
+                  checked
+                  aria-label="No rating."
+                />
+                <input
+                  type="radio"
+                  id="first-rate1"
+                  name="review[rating]"
+                  value="1"
+                />
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input
+                  type="radio"
+                  id="first-rate2"
+                  name="review[rating]"
+                  value="2"
+                />
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input
+                  type="radio"
+                  id="first-rate3"
+                  name="review[rating]"
+                  value="3"
+                />
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input
+                  type="radio"
+                  id="first-rate4"
+                  name="review[rating]"
+                  value="4"
+                />
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input
+                  type="radio"
+                  id="first-rate5"
+                  name="review[rating]"
+                  value="5"
+                />
+                <label for="first-rate5" title="Amazing">5 stars</label>
+              </fieldset>
+              <legend>Comment:</legend>
+              <textarea
+                class="form-control"
+                id="comment"
+                name="review[comment]"
+                rows="4"
+                cols="50"
+                required
+              ></textarea>
+              <button type="submit" class="btn btn-outline-dark">
+                Submit Review
+              </button>
+            </div>
+          </form>
+        </div>
+        <%}%> <%if(property.reviews.length>0){%>
+        <div class="row">
+          <p><Strong>All Reviews</Strong></p>
+
+          <% for (let review of property.reviews) { %>
+          <div class="card col-lg-5 col-md-6 col-sm-10 col-12 ms-3 mb-3">
+            <div class="card-body">
+              <h4 class="card-title">@<%= review.author.username %></h4>
+              <p
+                class="card-text starability-result"
+                data-rating="<%= review.rating %>"
+              ></p>
+              <p class="card-text"><%= review.comment %></p>
+
+              <div class="card-footer">
+                <form
+                  action="/properties/<%= property._id %>/reviews/<%= review._id %>?_method=DELETE"
+                  method="post"
+                >
+                  <button class="btn btn-sm btn-dark">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <% } %>
+        </div>
+        <%}%>
+      </div>
+    </div>
+    <div class="map-container">
+      <h1>Find us on the map</h1>
+      <div id="map"></div>
+    </div>
+  </div>
+  <script>
+    // Ensure the variables are properly parsed by EJS and outputted as JavaScript values
+    let latitude = <%- JSON.stringify(lat) %>;
+    let longitude = <%- JSON.stringify(lon) %>;
+  </script>
+</body>

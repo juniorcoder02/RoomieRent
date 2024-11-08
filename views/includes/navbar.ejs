@@ -1,0 +1,39 @@
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <div class="logo">
+        <a href="/">RoomieRent</a>
+      </div>
+
+      <!-- Navbar Toggle Button for Mobile -->
+      <div class="navbar-toggle">
+        ☰
+        <!-- This is the hamburger icon -->
+
+     
+      </div>
+
+      <nav class="navbar">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/properties">All Listings</a></li>
+          <li><a href="/properties/new">Create new listing</a></li>
+          <li><a href="mailto:aadiqureshi89@gmail.com">Contact Us</a></li>
+          <li class="signup-mobile"><a href="/signup">signup</a></li>
+
+        </ul>
+       
+      </nav>
+
+      <div class="header-cta">
+        <%if(!currUser){%>
+        <a href="/signup" class="btn">Sign up</a>
+        <a href="/login" class="btn">Log In</a>
+        <%}%> <% if(currUser){%>
+        <a href="/logout" class="btn">Log Out</a>
+        <%}%>
+      </div>
+    </div>
+  </div>
+  <script src="/js/navbar.js"></script>
+</header>
