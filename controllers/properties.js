@@ -76,7 +76,13 @@ module.exports.newProperty = async (req, res) => {
   });
 
   //Save the new property to the database
-  await newProperty.save();
+  try {
+    await newProperty.save();
+    req.flash("success", "New property added!");
+  } catch (e) {
+    req.flash("error", e.message);
+    res.redirect("/properties/new");
+  }
   req.flash("success", "New property added!");
 
   res.redirect("/properties"); // Redirect to the properties list or a success page
@@ -98,7 +104,7 @@ module.exports.showProperty = async (req, res) => {
   }
   // Assuming lat and lon were fetched and saved earlier
   const { lat, lon } = property.location;
-  res.render("Properties/show", { property,lat,lon });
+  res.render("Properties/show", { property, lat, lon });
 };
 
 module.exports.editPropertyForm = async (req, res) => {
@@ -113,28 +119,28 @@ module.exports.editPropertyForm = async (req, res) => {
 };
 
 module.exports.editProperty = async (req, res) => {
-   // Get the city from the property data
-   const city = req.body.property.city;
+  // Get the city from the property data
+  const city = req.body.property.city;
 
-   // Make a request to Nominatim API to get coordinates for the city
-   const response = await axios.get(
-     `https://nominatim.openstreetmap.org/search`,
-     {
-       params: {
-         city: city,
-         format: "json",
-         limit: 1,
-       },
-     }
-   );
- 
-   // Extract latitude and longitude
-   const { lat, lon } = response.data[0];
+  // Make a request to Nominatim API to get coordinates for the city
+  const response = await axios.get(
+    `https://nominatim.openstreetmap.org/search`,
+    {
+      params: {
+        city: city,
+        format: "json",
+        limit: 1,
+      },
+    }
+  );
+
+  // Extract latitude and longitude
+  const { lat, lon } = response.data[0];
   propertySchema.validate(req.body);
 
   let { id } = req.params;
   let property = await Property.findById(id);
-  
+
   if (!property) {
     req.flash("error", "Property not found!");
     return res.redirect("/properties");
