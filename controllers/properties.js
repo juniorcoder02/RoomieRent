@@ -13,79 +13,73 @@ module.exports.newPropertyForm = (req, res) => {
 };
 
 module.exports.newProperty = async (req, res) => {
-  const upload = multer({
-    limits: { fileSize: 10 * 1024 }, // Limit file size to 10 KB
-    fileFilter(req, file, cb) {
-      if (!file.mimetype.startsWith("image/")) {
-        return cb(new Error("Only image files are allowed!"));
-      }
-      cb(null, true);
-    },
-  });
-
-  const files = req.files;
-  // Check if there are any upload errors
-  if (!files || files.length === 0) {
-    req.flash("error", "Please upload at least one image.");
-    return res.redirect("/properties/new");
-  }
-
-  // Extract Cloudinary URLs and filenames
-  const image = req.files.map((file) => ({
-    url: file.path, // Cloudinary URL
-    filename: file.filename, // Cloudinary filename
-  }));
-
-  // Get the city from the property data
-  const city = req.body.property.city;
-
-  // Make a request to Nominatim API to get coordinates for the city
-  const response = await axios.get(
-    `https://nominatim.openstreetmap.org/search`,
-    {
-      params: {
-        city: city,
-        format: "json",
-        limit: 1,
-      },
-    }
-  );
-
-  // Extract latitude and longitude
-  const { lat, lon } = response.data[0];
-
-  // Construct the property object from form data
-  const newProperty = new Property({
-    title: req.body.property.title,
-    description: req.body.property.description,
-    location: {
-      street: req.body.property.street,
-      city: req.body.property.city,
-      state: req.body.property.state,
-      country: req.body.property.country,
-      zipCode: req.body.property.zipCode,
-      lat: lat,
-      lon: lon,
-    },
-    price: req.body.property.price,
-    propertyType: req.body.property.propertyType,
-    availableFrom: new Date(req.body.property.availableFrom),
-    amenities: req.body.property.amenities,
-    owner: req.user._id,
-    images: image, // Store both URL and filename in the model
-  });
-
-  //Save the new property to the database
   try {
+    const files = req.files;
+    // Check if there are any upload errors
+    if (!files || files.length === 0) {
+      req.flash("error", "Please upload at least one image.");
+      return res.redirect("/properties/new");
+    }
+
+    // Extract Cloudinary URLs and filenames
+    const image = req.files.map((file) => ({
+      url: file.path, // Cloudinary URL
+      filename: file.filename, // Cloudinary filename
+    }));
+
+    // Get the city from the property data
+    const city = req.body.property.city;
+
+    // Make a request to Nominatim API to get coordinates for the city
+    const response = await axios.get(
+      `https://nominatim.openstreetmap.org/search`,
+      {
+        params: {
+          city: city,
+          format: "json",
+          limit: 1,
+        },
+        headers: {
+          'User-Agent': 'RoomieRentApp (xyz@gmail.com)' // replace with your email
+        }
+      }
+    );
+
+    // Extract latitude and longitude
+    const { lat, lon } = response.data[0];
+
+    // Construct the property object from form data
+    const newProperty = new Property({
+      title: req.body.property.title,
+      description: req.body.property.description,
+      location: {
+        street: req.body.property.street,
+        city: req.body.property.city,
+        state: req.body.property.state,
+        country: req.body.property.country,
+        zipCode: req.body.property.zipCode,
+        lat: lat,
+        lon: lon,
+      },
+      price: req.body.property.price,
+      propertyType: req.body.property.propertyType,
+      availableFrom: new Date(req.body.property.availableFrom),
+      amenities: req.body.property.amenities,
+      owner: req.user._id,
+      images: image, // Store both URL and filename in the model
+    });
+
+    //Save the new property to the database
+
     await newProperty.save();
     req.flash("success", "New property added!");
-  } catch (e) {
-    req.flash("error", e.message);
+
+    res.redirect("/properties"); // Redirect to the properties list or a success page
+  } catch (error) {
+    console.error("Error in newProperty:", error);
+    req.flash("error", "Could not save property to MongoDB.");
     res.redirect("/properties/new");
   }
-  req.flash("success", "New property added!");
-
-  res.redirect("/properties"); // Redirect to the properties list or a success page
 };
 
 module.exports.showProperty = async (req, res) => {
