@@ -125,6 +125,9 @@ module.exports.editProperty = async (req, res) => {
         format: "json",
         limit: 1,
       },
+      headers: {
+        'User-Agent': 'RoomieRentApp (xyz@gmail.com)' // replace with your email
+      },
     }
   );
 
